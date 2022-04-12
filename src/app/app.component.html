@@ -1,3 +1,7 @@
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
 <section>
 <button mat-raised-button color="primary"> Hello world!
   <mat-icon>home</mat-icon>
@@ -150,24 +154,26 @@ as autocomplete options. It is still not finished -->
   </mat-step>
 
   <mat-step label="Configure command"  [completed]="secondCompleted">
-    <p>TC Set-up  </p>
+    <p style="text-align:center;">Arguments </p>
 
     <form [formGroup]="secondFormGroup">
       
       <div>
         <mat-form-field appearance="fill">
-          <mat-label>Address</mat-label>
+          <mat-label>application_process_ID</mat-label>
           <input matInput (pointerleave)="secondComplete()" formControlName="secondCtrl" placeholder="integer"
                 required>
+          <mat-hint align="end">integer</mat-hint>
         </mat-form-field>
      </div>
      </form>
      <form [formGroup]="thirdFormGroup">
      <div>
         <mat-form-field appearance="fill">
-          <mat-label>Address</mat-label>
-          <input  matInput (pointerleave)="secondComplete()" formControlName="thirdCtrl" placeholder="enum"
+          <mat-label>packet_data_length</mat-label>
+          <input  matInput (pointerleave)="secondComplete()" formControlName="thirdCtrl" placeholder="integer"
                 required>
+          <mat-hint align="end">integer</mat-hint>
         </mat-form-field>
      </div>
     <div>
@@ -185,7 +191,72 @@ as autocomplete options. It is still not finished -->
     <button mat-button (click)="stepper.reset()">Reset</button>
   </mat-step>
 </mat-horizontal-stepper>
- 
-</div>
 
-<app-stepper></app-stepper>
+{{ registrationForm.value | json}} 
+<div class="container-fluid">
+  <h2> REgistration form </h2>
+  <form [formGroup]="registrationForm"> <!-- we bind the formgroup with the object formGroup-->
+    
+    <!-- with formcontrolname we bind the formcontrol with an input-->
+    <div class="form-group" >
+      <label> Username </label>
+      <input [class.is-invalid]="userName!.invalid && userName?.touched" formControlName="userName" type="text" class="form-control"> <!-- the is invalid anfd touched are not working  without the link in the head  -->
+      <!-- <small [class.d-none]="userName!.invalid && userName?.touched" class="text-danger"> username is required </small> -->
+      <div *ngIf="userName!.invalid && userName?.touched">
+        <small *ngIf="userName!.errors!['required']" class="text-danger"> username is required </small>
+        <small *ngIf="userName!.errors!['length']" class="text-danger"> minimum length is 3 characters </small> <!-- not owrking for osme reason not showng text -->
+        <small *ngIf="userName!.errors!['forbiddenName']" class="text-danger"> username not allowed </small> 
+      
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email </label>
+      <input formControlName="email" type="text" class="form-control">
+      <button type="button" (click)="addAlternateEmail()" > add email </button>  
+    </div>
+    <div formArrayName="alternateEmails" *ngFor="let email of alternateEmails.controls; let i=index">
+       <input type="text" class="form-control my-1" [formControlName]="i"> 
+
+    </div>
+
+    <div class="form-group">
+      <label>Password </label>
+      <input formControlName="password" type="password" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label>Confirm password  </label>
+      <input  formControlName="confirmPassword" type="password" class="form-control">
+      <small class="text-danger" *ngIf="registrationForm.errors!['misMatch']"> passwords not matching </small> <!-- always password  match-->
+    </div>
+    <!-- [class.is-invalid]="registrationForm.errors!['misMatch']" this should be inside input but is not working properly -->
+
+    <div formGroupName="address">
+
+    <div class="form-group">
+      <label>City </label> 
+      <input formControlName="city" type="text" class="form-control">
+    </div>
+ 
+    <div class="form-group">
+      <label>State </label>
+      <input  formControlName="state" type="text" class="form-control">
+     </div>
+
+    <div class="form-group">
+      <label>City   </label>
+      <input  formControlName="postalCode" type="text" class="form-control">
+    </div>
+
+    </div>
+
+    <button class="btn btn-primary" type="sumbit"> Register </button>
+    <button (click)="loadApiData()" class='btn btn-secondary ml-2' type="button">Load API data </button>
+  </form>
+
+  {{ registrationForm.value | json}}  <!-- we can see the values of the json -->
+</div>
+ 
+
+
